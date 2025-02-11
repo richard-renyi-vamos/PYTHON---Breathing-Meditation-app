@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Exercise</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            color: white;
+            flex-direction: column;
+        }
+        .circle {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            border-radius: 50%;
+            position: absolute;
+            animation: none;
+        }
+        @keyframes breathe {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Breathing Exercise</h1>
+    <div class="circle" id="circle"></div>
+    <p id="phase">Press Start</p>
+    <button onclick="startBreathing()">Start</button>
+
+    <script>
+        async function startBreathing() {
+            document.getElementById("phase").innerText = "Starting...";
+            await fetch("/start");
+            cycleBreathing();
+        }
+
+        async function cycleBreathing() {
+            while (true) {
+                await setPhase("Breathe In", "breathe 4s ease-in-out");
+                await setPhase("Hold", "none", 4);
+                await setPhase("Breathe Out", "breathe 4s ease-in-out");
+            }
+        }
+
+        function setPhase(text, animation, duration = 4) {
+            return new Promise(resolve => {
+                document.getElementById("phase").innerText = text;
+                const circle = document.getElementById("circle");
+                circle.style.animation = animation;
+                setTimeout(resolve, duration * 1000);
+            });
+        }
+    </script>
+</body>
+</html>
